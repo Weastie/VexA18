@@ -1,3 +1,17 @@
+// Motor defines
+#define L_DRIVE 1
+#define R_DRIVE 2
+#define LOWER_LIFT_L 3
+#define LOWER_LIFT_R 4
+#define UPPER_LIFT_L1 5
+#define UPPER_LIFT_L2 6
+#define UPPER_LIFT_R1 7
+#define UPPER_LIFT_R2 8
+#define CLAW 9
+
+// Limit switch port
+#define LIMIT_SWITCH 1
+
 /** @file main.h
  * @brief Header file for global functions
  *

@@ -12,17 +12,6 @@
 
 #include "main.h"
 
-// Motor defines
-#define L_DRIVE 1
-#define R_DRIVE 2
-#define LOWER_LIFT_L 3
-#define LOWER_LIFT_R 4
-#define UPPER_LIFT_L1 5
-#define UPPER_LIFT_L2 6
-#define UPPER_LIFT_R1 7
-#define UPPER_LIFT_R2 8
-#define CLAW 9
-
 void setDrive(int speed, int duration);
 void spinLeft(int duration);
 void spinRight(int duration);
@@ -30,14 +19,42 @@ void lowerLLift(int duration);
 void raiseLLift(int duration);
 
 void autonomous() {
+
+    // By default, we are on the right side of the bar
+    int rightSide = 1;
+    if (digitalRead(LIMIT_SWITCH) == LOW) {
+        // if the limit switch is pressed, we are on the left side of the bar
+        rightSide = 0;
+    }
+
     // Move forward to get under the cone
     setDrive(127, 3200);
     // Raise the lift while under the cone
     raiseLLift(1500);
-    // 180
-    spinLeft(4500);
+    // Here, we will turn around. This is when it matters what side we are on.
+
+    if (rightSide) {
+        // We are on the right side of the bar
+
+        // Spin ~30 degrees to the left
+        spinLeft(900);
+        // Move forward slightly
+        setDrive(127, 1000);
+        // Spin  ~160 degrees to complete turn
+        spinLeft(3800);
+    } else {
+        // We are on the left side of the bar
+
+        // Spin ~30 degrees to the right
+        spinRight(900);
+        // Move forward slightly
+        setDrive(127, 1000);
+        // Spin ~160 degrees to complete turn
+        spinRight(3800);
+    }
+
     // Drive back to start
-    setDrive(127, 4500);
+    setDrive(127, 5000);
     // Release cone
     lowerLLift(1500);
     // Move back a little bit
