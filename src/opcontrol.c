@@ -82,8 +82,8 @@ void operatorControl() {
         }
         handleDrive();
         handleLowerLift();
-        handleUpperLift();
-        handleClaw();
+        // handleUpperLift();
+        // handleClaw();
 
         // Reverse the motors that are designated in reversedMotors
         handleDirections(reversedMotors, numReversedMotors);

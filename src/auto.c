@@ -28,12 +28,30 @@ void autonomous() {
     }
 
     // Move forward to get under the cone
-    setDrive(127, 3200);
+    setDrive(127, 4650);
     // Raise the lift while under the cone
     raiseLLift(1500);
+    if (rightSide) {
+        spinRight(200);
+    } else {
+        delay(400);
+        spinLeft(125);
+    }
+    // Move backwards
+    setDrive(-127, 5600);
+    // if (rightSide) {
+        // spinLeft(4400);
+    // } else {
+        // spinRight(4400);
+    // }
+    lowerLLift(1100);
+    setDrive(-127, 900);
+
+    // OLD CODE BELOW
+
     // Here, we will turn around. This is when it matters what side we are on.
 
-    if (rightSide) {
+    /*if (rightSide) {
         // We are on the right side of the bar
 
         // Spin ~30 degrees to the left
@@ -58,12 +76,12 @@ void autonomous() {
     // Release cone
     lowerLLift(1500);
     // Move back a little bit
-    setDrive(-127, 1000);
+    setDrive(-127, 1000);*/
 }
 
 void setDrive(int speed, int duration) {
     motorSet(L_DRIVE, speed);
-    motorSet(R_DRIVE, speed);
+    motorSet(R_DRIVE, speed * 0.9);
  	delay(duration);
  	motorStop(L_DRIVE);
  	motorStop(R_DRIVE);
@@ -83,8 +101,8 @@ void spinRight(int duration) {
     motorStop(R_DRIVE);
 }
 void lowerLLift(int duration) {
-    motorSet(LOWER_LIFT_L, -45);
-    motorSet(LOWER_LIFT_R, -45 * -1);
+    motorSet(LOWER_LIFT_L, -80);
+    motorSet(LOWER_LIFT_R, -80 * -1);
     delay(duration);
     motorStop(LOWER_LIFT_L);
     motorStop(LOWER_LIFT_R);

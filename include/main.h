@@ -1,5 +1,5 @@
 // Motor defines
-#define L_DRIVE 1
+#define L_DRIVE 9
 #define R_DRIVE 2
 #define LOWER_LIFT_L 3
 #define LOWER_LIFT_R 4
