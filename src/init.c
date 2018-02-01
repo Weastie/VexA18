@@ -38,4 +38,6 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 void initialize() {
+    analogCalibrate(LEFT_POTENT);
+    analogCalibrate(RIGHT_POTENT);
 }
