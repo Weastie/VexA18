@@ -133,23 +133,6 @@ void buttonDrive() {
 
 // Set the lower lift motors to their appropriate values
 void handleLowerLift() {
-    /*if (joystickGetDigital(MAIN_CONTROLLER, LOWER_LIFT_UP_BTN, JOY_UP)) {
-        // Move lower lift motors upwards at full speed
-        motorSet(LOWER_LIFT_L, 127);
-        motorSet(LOWER_LIFT_R, 127);
- 	} else if (joystickGetDigital(MAIN_CONTROLLER, LOWER_LIFT_UP_BTN, JOY_DOWN)) {
- 		// Move lower lift motors upwards at miniscule speed to counter-act gravity
- 		motorSet(LOWER_LIFT_L, 15);
- 		motorSet(LOWER_LIFT_R, 15);
- 	} else if (joystickGetDigital(MAIN_CONTROLLER, LOWER_LIFT_DOWN_BTN, JOY_UP)) {
- 		// Move lower lift motors downwards at half speed because gravity helps.
- 		motorSet(LOWER_LIFT_L, -64);
- 		motorSet(LOWER_LIFT_R, -64);
- 	} else {
- 		// If neither lower lift button is pressed, make sure the motors are stopped
- 		motorStop(LOWER_LIFT_L);
- 		motorStop(LOWER_LIFT_R);
- 	}*/
     if (joystickGetDigital(MAIN_CONTROLLER, 6, JOY_UP)) {
         motorSet(LOWER_LIFT_R, 127);
     } else if (joystickGetDigital(MAIN_CONTROLLER, 6, JOY_DOWN)) {
