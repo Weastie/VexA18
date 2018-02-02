@@ -9,8 +9,12 @@
 #define UPPER_LIFT_R2 8
 #define CLAW 9
 
-// Limit switch port
+// Electronic ports
+// Digital
 #define LIMIT_SWITCH 1
+// Analog
+#define LEFT_POTENT 1
+#define RIGHT_POTENT 2
 
 /** @file main.h
  * @brief Header file for global functions

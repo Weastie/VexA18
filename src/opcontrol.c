@@ -73,8 +73,8 @@ void handleDirections(int reversed[], int numReversed);
 int checkTolerance(int num);
 
 void operatorControl() {
-    int numReversedMotors = 1;
     int reversedMotors[1] = {LOWER_LIFT_R};
+    int numReversedMotors = sizeof(reversedMotors) / sizeof(reversedMotors[0]);
 
     while (1) {
         if (joystickGetDigital(MAIN_CONTROLLER, 8, JOY_RIGHT)) {
@@ -152,25 +152,22 @@ void handleLowerLift() {
 
 // Set the upper lift motors to their appropriate values
 void handleUpperLift() {
+    int lPotent = analogRead(LEFT_POTENT);
+    int rPotent = analogRead(RIGHT_POTENT);
+    int speed = 0;
+
     if (joystickGetDigital(PARTNER_CONTROLLER, UPPER_LIFT_BTN, JOY_UP)) {
-        // Move upper lift motors upwards
-        motorSet(UPPER_LIFT_L1, 127);
-        motorSet(UPPER_LIFT_L2, 127);
-        motorSet(UPPER_LIFT_R1, 127);
-        motorSet(UPPER_LIFT_R2, 127);
+        // Move lift upwards according to curve
+        speed = 0;
     } else if (joystickGetDigital(PARTNER_CONTROLLER, UPPER_LIFT_BTN, JOY_DOWN)) {
-        // Move upper lift motors downwards at half speed because gravity helps.
-        motorSet(UPPER_LIFT_L1, -64);
-        motorSet(UPPER_LIFT_L2, -64);
-        motorSet(UPPER_LIFT_R1, -64);
-        motorSet(UPPER_LIFT_R2, -64);
-    } else {
-        // If neither upper lift button is pressed, make sure the motors are stopped.
-        motorStop(UPPER_LIFT_L1);
-        motorStop(UPPER_LIFT_L2);
-        motorStop(UPPER_LIFT_R1);
-        motorStop(UPPER_LIFT_R2);
+        // Move lift downwards according to curve
+        speed = 0;
     }
+
+    motorSet(UPPER_LIFT_L1, speed);
+    motorSet(UPPER_LIFT_L2, speed);
+    motorSet(UPPER_LIFT_R1, speed);
+    motorSet(UPPER_LIFT_R2, speed);
 }
 
 void handleClaw() {
