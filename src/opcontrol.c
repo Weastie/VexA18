@@ -56,8 +56,9 @@
 
 // Partner controller defines
 #define PARTNER_CONTROLLER 2
-#define UPPER_LIFT_BTN 6
-#define CLAW_BTN 5
+#define UPPER_LIFT_EXT 2
+#define UPPER_LIFT_BTN 7
+#define CLAW_BTN 8
 
 //Other value defines
 #define TOLERANCE 17
@@ -152,22 +153,35 @@ void handleLowerLift() {
 
 // Set the upper lift motors to their appropriate values
 void handleUpperLift() {
+    // Lift
     int lPotent = analogRead(LEFT_POTENT);
     int rPotent = analogRead(RIGHT_POTENT);
-    int speed = 0;
+    int liftSpeed = 0;
 
     if (joystickGetDigital(PARTNER_CONTROLLER, UPPER_LIFT_BTN, JOY_UP)) {
         // Move lift upwards according to curve
-        speed = 0;
+        liftSpeed = 127;
     } else if (joystickGetDigital(PARTNER_CONTROLLER, UPPER_LIFT_BTN, JOY_DOWN)) {
         // Move lift downwards according to curve
-        speed = 0;
+        liftSpeed = -20;
     }
 
-    motorSet(UPPER_LIFT_L1, speed);
-    motorSet(UPPER_LIFT_L2, speed);
-    motorSet(UPPER_LIFT_R1, speed);
-    motorSet(UPPER_LIFT_R2, speed);
+    motorSet(UPPER_LIFT_L1, liftSpeed);
+    motorSet(UPPER_LIFT_R1, liftSpeed);
+
+    // Extender
+    int extenderSpeed = joystickGetAnalog(PARTNER_CONTROLLER, UPPER_LIFT_EXT);
+    motorSet(UPPER_LIFT_L2, extenderSpeed);
+    motorSet(UPPER_LIFT_R2, extenderSpeed);
+
+    // Claw
+    int clawSpeed = 0;
+    if (joystickGetDigital(PARTNER_CONTROLLER, CLAW_BTN, JOY_LEFT)) {
+        clawSpeed = -67;
+    } else if (joystickGetDigital(PARTNER_CONTROLLER, CLAW_BTN, JOY_RIGHT)) {
+        clawSpeed = 67;
+    }
+    motorSet(CLAW, clawSpeed);
 }
 
 void handleClaw() {
