@@ -61,7 +61,8 @@
 #define CLAW_BTN 8
 
 //Other value defines
-#define TOLERANCE 17
+#define JOYSTICK_TOLERANCE 17
+#define POTENT_TOLERANCE 8
 
 // The functions we will need to use for the robot
 void handleDrive();
@@ -71,19 +72,36 @@ void handleLowerLift();
 void handleUpperLift();
 void handleClaw();
 void handleDirections(int reversed[], int numReversed);
-int checkTolerance(int num);
+int toleranceCheck(int num, int tolerance);
+int isWithinTolerance(int num1, int num2, int tolerance);
+void debugPotents();
 
 void operatorControl() {
+
     int reversedMotors[1] = {LOWER_LIFT_R};
     int numReversedMotors = sizeof(reversedMotors) / sizeof(reversedMotors[0]);
 
+    int lPotent = -8;
+    int rPotent = -8;
     while (1) {
-        if (joystickGetDigital(MAIN_CONTROLLER, 8, JOY_RIGHT)) {
-            autonomous();
+        // if (joystickGetDigital(MAIN_CONTROLLER, 8, JOY_RIGHT)) {
+            // autonomous();
+        // }
+        // int curLPotent = analogReadCalibrated(LEFT_POTENT);
+        // int curRPotent = analogReadCalibrated(RIGHT_POTENT);
+        int curLPotent = analogRead(LEFT_POTENT) - lPotentDif;
+        int curRPotent = analogRead(RIGHT_POTENT) - rPotentDif;
+        if (!isWithinTolerance(curLPotent, lPotent, POTENT_TOLERANCE)) {
+            printf("Left: %d\n", curLPotent);
+            lPotent = curLPotent;
+        }
+        if (!isWithinTolerance(curRPotent, rPotent, POTENT_TOLERANCE)) {
+            printf("Right: %d\n", curRPotent);
+            rPotent = curRPotent;
         }
         handleDrive();
         handleLowerLift();
-        // handleUpperLift();
+        handleUpperLift();
         // handleClaw();
 
         // Reverse the motors that are designated in reversedMotors
@@ -91,17 +109,23 @@ void operatorControl() {
         // Delay by 20 milliseconds to wait for joystick updates
         delay(20);
     }
+
+}
+
+void debugPotents() {
+
 }
 
 // Set the drive motors to their appropriate values
 void handleDrive() {
     buttonDrive();
-    joystickDrive();
+    // joystickDrive();
 }
 
 void joystickDrive() {
-    int ch2 = checkTolerance(joystickGetAnalog(MAIN_CONTROLLER, 2));
-    int ch3 = checkTolerance(joystickGetAnalog(MAIN_CONTROLLER, 3));
+    int ch2 = toleranceCheck(joystickGetAnalog(MAIN_CONTROLLER, 2), JOYSTICK_TOLERANCE);
+    int ch3 = toleranceCheck(joystickGetAnalog(MAIN_CONTROLLER, 3), JOYSTICK_TOLERANCE);
+
     if (abs(ch2) > 0 || abs(ch3) > 0) {
         motorSet(L_DRIVE, ch3);
         motorSet(R_DRIVE, ch2);
@@ -153,9 +177,12 @@ void handleLowerLift() {
 
 // Set the upper lift motors to their appropriate values
 void handleUpperLift() {
+    // Max height is roughly 1608
+    // Smallest height is roughly -1
+
     // Lift
-    int lPotent = analogRead(LEFT_POTENT);
-    int rPotent = analogRead(RIGHT_POTENT);
+    // int lPotent = analogRead(LEFT_POTENT);
+    // int rPotent = analogRead(RIGHT_POTENT);
     int liftSpeed = 0;
 
     if (joystickGetDigital(PARTNER_CONTROLLER, UPPER_LIFT_BTN, JOY_UP)) {
@@ -166,13 +193,13 @@ void handleUpperLift() {
         liftSpeed = -20;
     }
 
-    motorSet(UPPER_LIFT_L1, liftSpeed);
-    motorSet(UPPER_LIFT_R1, liftSpeed);
+    motorSet(UPPER_LIFT_L, liftSpeed);
+    motorSet(UPPER_LIFT_R, liftSpeed);
 
     // Extender
     int extenderSpeed = joystickGetAnalog(PARTNER_CONTROLLER, UPPER_LIFT_EXT);
-    motorSet(UPPER_LIFT_L2, extenderSpeed);
-    motorSet(UPPER_LIFT_R2, extenderSpeed);
+    motorSet(UPPER_EXT_L, extenderSpeed);
+    motorSet(UPPER_EXT_R, extenderSpeed);
 
     // Claw
     int clawSpeed = 0;
@@ -182,19 +209,6 @@ void handleUpperLift() {
         clawSpeed = 67;
     }
     motorSet(CLAW, clawSpeed);
-}
-
-void handleClaw() {
-    if (joystickGetDigital(PARTNER_CONTROLLER, CLAW_BTN, JOY_UP)) {
-        // Close claw
-        motorSet(CLAW, 48);
-    } else if (joystickGetDigital(PARTNER_CONTROLLER, CLAW_BTN, JOY_DOWN)) {
-        // Open claw
-        motorSet(CLAW, -48);
-    } else {
-        // If neither claw button is pressed, make sure the motors are stopped.
-        motorStop(CLAW);
-    }
 }
 
 // Reverse motors that need to be reversed
@@ -207,9 +221,17 @@ void handleDirections(int reversed[], int numReversed) {
 }
 
 // Check if number is above tolerance. If it is, return that number. If not, return 0.
-int checkTolerance(int num) {
-    if (abs(num) > TOLERANCE) {
+int toleranceCheck(int num, int tolerance) {
+    if (abs(num) > tolerance) {
         return num;
+    } else {
+        return 0;
+    }
+}
+
+int isWithinTolerance(int num1, int num2, int tolerance) {
+    if ( abs (num1 - num2) <= tolerance) {
+        return 1;
     } else {
         return 0;
     }

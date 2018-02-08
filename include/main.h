@@ -1,13 +1,16 @@
 // Motor defines
-#define L_DRIVE 9
 #define R_DRIVE 2
+#define L_DRIVE 9
 #define LOWER_LIFT_L 3
 #define LOWER_LIFT_R 4
-#define UPPER_LIFT_L1 5
-#define UPPER_LIFT_L2 6
-#define UPPER_LIFT_R1 7
-#define UPPER_LIFT_R2 8
-#define CLAW 9
+#define UPPER_LIFT_L 5
+#define UPPER_LIFT_R 6
+#define UPPER_EXT_L 7
+#define UPPER_EXT_R 8
+#define CLAW 10
+
+int lPotentDif = 0;
+int rPotentDif = 0;
 
 // Electronic ports
 // Digital

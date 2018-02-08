@@ -37,7 +37,15 @@ void initializeIO() {
  * will not start. An autonomous mode selection menu like the pre_auton() in other environments
  * can be implemented in this task if desired.
  */
+
+void calibrateLeftPotent() {
+    lPotentDif = analogRead(LEFT_POTENT);
+}
+void calibrateRightPotent() {
+    rPotentDif = analogRead(RIGHT_POTENT);
+}
+
 void initialize() {
-    analogCalibrate(LEFT_POTENT);
-    analogCalibrate(RIGHT_POTENT);
+    calibrateLeftPotent();
+    calibrateRightPotent();
 }

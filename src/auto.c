@@ -1,4 +1,4 @@
-/** @file auto.c
+    /** @file auto.c
  * @brief File for autonomous code
  *
  * This file should contain the user autonomous() function and any functions related to it.
@@ -28,60 +28,27 @@ void autonomous() {
     }
 
     // Move forward to get under the cone
-    setDrive(127, 4650);
+    setDrive(127, 5700);
+    /*
     // Raise the lift while under the cone
-    raiseLLift(1500);
+    raiseLLift(1300);
+    // Spin just a tad
     if (rightSide) {
-        spinRight(200);
+        spinRight(240);
     } else {
-        delay(400);
-        spinLeft(125);
+        spinLeft(240);
     }
-    // Move backwards
-    setDrive(-127, 5600);
-    // if (rightSide) {
-        // spinLeft(4400);
-    // } else {
-        // spinRight(4400);
-    // }
-    lowerLLift(1100);
-    setDrive(-127, 900);
-
-    // OLD CODE BELOW
-
-    // Here, we will turn around. This is when it matters what side we are on.
-
-    /*if (rightSide) {
-        // We are on the right side of the bar
-
-        // Spin ~30 degrees to the left
-        spinLeft(900);
-        // Move forward slightly
-        setDrive(127, 1000);
-        // Spin  ~160 degrees to complete turn
-        spinLeft(3800);
-    } else {
-        // We are on the left side of the bar
-
-        // Spin ~30 degrees to the right
-        spinRight(900);
-        // Move forward slightly
-        setDrive(127, 1000);
-        // Spin ~160 degrees to complete turn
-        spinRight(3800);
-    }
-
     // Drive back to start
-    setDrive(127, 5000);
-    // Release cone
-    lowerLLift(1500);
-    // Move back a little bit
-    setDrive(-127, 1000);*/
+    setDrive(-127, 6300);
+    // Lower the lift
+    lowerLLift(880);
+    // Move back away from dropped cone
+    setDrive(-127, 1100);*/
 }
 
 void setDrive(int speed, int duration) {
     motorSet(L_DRIVE, speed);
-    motorSet(R_DRIVE, speed * 0.9);
+    motorSet(R_DRIVE, speed);
  	delay(duration);
  	motorStop(L_DRIVE);
  	motorStop(R_DRIVE);
@@ -101,8 +68,8 @@ void spinRight(int duration) {
     motorStop(R_DRIVE);
 }
 void lowerLLift(int duration) {
-    motorSet(LOWER_LIFT_L, -80);
-    motorSet(LOWER_LIFT_R, -80 * -1);
+    motorSet(LOWER_LIFT_L, -100);
+    motorSet(LOWER_LIFT_R, -100 * -1);
     delay(duration);
     motorStop(LOWER_LIFT_L);
     motorStop(LOWER_LIFT_R);
