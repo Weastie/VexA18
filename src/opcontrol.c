@@ -62,7 +62,8 @@
 
 //Other value defines
 #define JOYSTICK_TOLERANCE 17
-#define POTENT_TOLERANCE 8
+#define POTENT_TOLERANCE 0.10
+
 
 // The functions we will need to use for the robot
 void handleDrive();
@@ -70,39 +71,31 @@ void joystickDrive();
 void buttonDrive();
 void handleLowerLift();
 void handleUpperLift();
-void handleClaw();
 void handleDirections(int reversed[], int numReversed);
 int toleranceCheck(int num, int tolerance);
 int isWithinTolerance(int num1, int num2, int tolerance);
 void debugPotents();
+
+// debug = 1 --> Print potent values and allow autonomous through button
+int debug = 0;
 
 void operatorControl() {
 
     int reversedMotors[1] = {LOWER_LIFT_R};
     int numReversedMotors = sizeof(reversedMotors) / sizeof(reversedMotors[0]);
 
-    int lPotent = -8;
-    int rPotent = -8;
     while (1) {
-        // if (joystickGetDigital(MAIN_CONTROLLER, 8, JOY_RIGHT)) {
-            // autonomous();
-        // }
-        // int curLPotent = analogReadCalibrated(LEFT_POTENT);
-        // int curRPotent = analogReadCalibrated(RIGHT_POTENT);
-        int curLPotent = analogRead(LEFT_POTENT) - lPotentDif;
-        int curRPotent = analogRead(RIGHT_POTENT) - rPotentDif;
-        if (!isWithinTolerance(curLPotent, lPotent, POTENT_TOLERANCE)) {
-            printf("Left: %d\n", curLPotent);
-            lPotent = curLPotent;
+        setPotents();
+        if (debug)
+            debugPotents();
+
+        if (debug && joystickGetDigital(MAIN_CONTROLLER, 8, JOY_RIGHT)) {
+            autonomous();
         }
-        if (!isWithinTolerance(curRPotent, rPotent, POTENT_TOLERANCE)) {
-            printf("Right: %d\n", curRPotent);
-            rPotent = curRPotent;
-        }
+
         handleDrive();
         handleLowerLift();
         handleUpperLift();
-        // handleClaw();
 
         // Reverse the motors that are designated in reversedMotors
         handleDirections(reversedMotors, numReversedMotors);
@@ -113,13 +106,20 @@ void operatorControl() {
 }
 
 void debugPotents() {
-
+    printf("Right: %f\n Left: %f\n", getRightPotent(), getLeftPotent());
+    if (getLeftPotent() - getRightPotent() > POTENT_TOLERANCE) {
+        printf("LEFT HIGHER THAN RIGHT\n");
+    }
+    else if (getRightPotent() - getLeftPotent() > POTENT_TOLERANCE) {
+        printf("RIGHT HIGHER THAN LEFT\n");
+    }
+    printf("=============\n");
 }
 
 // Set the drive motors to their appropriate values
 void handleDrive() {
     buttonDrive();
-    // joystickDrive();
+    joystickDrive();
 }
 
 void joystickDrive() {
@@ -175,26 +175,69 @@ void handleLowerLift() {
     }
 }
 
+// Upper lift functions
+int getUpperRaiseSpeed() {
+    return 127;
+}
+int getLowerRaiseSpeed() {
+    return -50;
+}
+
 // Set the upper lift motors to their appropriate values
 void handleUpperLift() {
     // Max height is roughly 1608
     // Smallest height is roughly -1
 
-    // Lift
-    // int lPotent = analogRead(LEFT_POTENT);
-    // int rPotent = analogRead(RIGHT_POTENT);
-    int liftSpeed = 0;
+    int rLiftSpeed = 0;
+    int lLiftSpeed = 0;
 
     if (joystickGetDigital(PARTNER_CONTROLLER, UPPER_LIFT_BTN, JOY_UP)) {
-        // Move lift upwards according to curve
-        liftSpeed = 127;
+        // Move lift upwards
+
+        // If potentiometers are off, only move one.
+        if (getLeftPotent() - getRightPotent() > POTENT_TOLERANCE) {
+            // Left is more than right by roughly 8%
+            // So we should only move right side up
+            rLiftSpeed = getUpperRaiseSpeed();
+            lLiftSpeed = 0;
+        }
+        else if (getRightPotent() - getLeftPotent() > POTENT_TOLERANCE) {
+            // Right is more than left by roughly 8%
+            // So we should only move left side up
+            lLiftSpeed = getUpperRaiseSpeed();
+            rLiftSpeed = 0;
+        } else {
+            // Lifts are roughly the same height
+            // So they should be the same speed
+            rLiftSpeed = getUpperRaiseSpeed();
+            lLiftSpeed = rLiftSpeed;
+        }
+
     } else if (joystickGetDigital(PARTNER_CONTROLLER, UPPER_LIFT_BTN, JOY_DOWN)) {
-        // Move lift downwards according to curve
-        liftSpeed = -20;
+        // Move lift downwards
+
+        // If potentiometers are off, only move one.
+        if (getLeftPotent() - getRightPotent() > POTENT_TOLERANCE) {
+            // Left is more than right by roughly 8%
+            // So we should move both
+            rLiftSpeed = 0;
+            lLiftSpeed = getLowerRaiseSpeed();
+        }
+        else if (getRightPotent() - getLeftPotent() > POTENT_TOLERANCE) {
+            // Right is more than left by roughly 8%
+            // So we should only move right side down
+            lLiftSpeed = 0;
+            rLiftSpeed = getLowerRaiseSpeed();
+        } else {
+            // Lifts are roughly the same height
+            // So we should move both
+            rLiftSpeed = getLowerRaiseSpeed();
+            lLiftSpeed = rLiftSpeed;
+        }
     }
 
-    motorSet(UPPER_LIFT_L, liftSpeed);
-    motorSet(UPPER_LIFT_R, liftSpeed);
+    motorSet(UPPER_LIFT_L, lLiftSpeed);
+    motorSet(UPPER_LIFT_R, rLiftSpeed);
 
     // Extender
     int extenderSpeed = joystickGetAnalog(PARTNER_CONTROLLER, UPPER_LIFT_EXT);

@@ -9,8 +9,8 @@
 #define UPPER_EXT_R 8
 #define CLAW 10
 
-int lPotentDif = 0;
-int rPotentDif = 0;
+// int lPotentDif = 0;
+// int rPotentDif = 0;
 
 // Electronic ports
 // Digital
@@ -114,6 +114,14 @@ void initialize();
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
 void operatorControl();
+
+// Potent, added manually
+void setPotents();
+float getLeftPotent();
+float getRightPotent();
+
+int getLeftPotentRaw();
+int getRightPotentRaw();
 
 // End C++ export structure
 #ifdef __cplusplus

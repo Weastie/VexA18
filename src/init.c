@@ -38,14 +38,7 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 
-void calibrateLeftPotent() {
-    lPotentDif = analogRead(LEFT_POTENT);
-}
-void calibrateRightPotent() {
-    rPotentDif = analogRead(RIGHT_POTENT);
-}
-
 void initialize() {
-    calibrateLeftPotent();
-    calibrateRightPotent();
+    analogCalibrate(LEFT_POTENT);
+    analogCalibrate(RIGHT_POTENT);
 }
